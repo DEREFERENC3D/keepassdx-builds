@@ -1,0 +1,53 @@
+name: Check for new releases
+
+on:
+  schedule:
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+
+    permissions:
+      actions: write # for REST API permission to dispatch a workflow
+
+    steps:
+      - name: Get the latest tag from upstream
+        id: upstream_tag
+        run: |
+          UPSTREAM_TAG=$(curl -s https://api.github.com/repos/Kunzisoft/KeePassDX/releases/latest | jq -r '.tag_name')
+          
+          if [[ -z "${UPSTREAM_TAG}" || "${UPSTREAM_TAG}" = "null" ]]; then
+            echo 'Error: Failed to fetch upstream release tag.'
+            exit 1
+          fi
+
+          echo "Latest upstream release: ${UPSTREAM_TAG}"
+          echo "tag=${UPSTREAM_TAG}" >> $GITHUB_OUTPUT
+
+      - name: Check if the tag exists in our repo
+        id: check
+        run: |
+          HTTP_STATUS=$(curl -s -o /dev/null -w '%{http_code}' \
+            -H 'Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' \
+            "https://api.github.com/repos/${{ github.repository }}/releases/tags/${{ steps.upstream_tag.outputs.tag }}")
+          
+          if [[ "${HTTP_STATUS}" -eq '404' ]]; then
+            echo "New version: ${{ steps.upstream_tag.outputs.tag }}"
+            echo 'build=true' >> $GITHUB_OUTPUT
+          else
+            if [[ "${HTTP_STATUS}" -eq '200' ]]; then
+              echo 'We are up to date.'
+            else
+              echo "Failed to check our latest release (got HTTP "${HTTP_STATUS}")"
+            fi
+            echo 'build=false' >> $GITHUB_OUTPUT
+          fi
+
+      - name: Kick off a build
+        if: steps.check.outputs.build == 'true'
+        uses: benc-uk/workflow-dispatch@v1
+        with:
+          workflow: build.yml
+          inputs: '{ "ref": "${{ steps.upstream_tag.outputs.tag }}" }'
