@@ -1,10 +1,10 @@
-From 56921d96e65976f525bb35c55a948f345fe34ad1 Mon Sep 17 00:00:00 2001
+From 22da4ddcc9960ace0d252d55629a8cfc177fb390 Mon Sep 17 00:00:00 2001
 From: DEREFERENC3D <DEREFERENC3D@protonmail.com>
 Date: Sun, 14 Jun 2026 01:41:11 +0200
 Subject: [PATCH 1/1] Remove "pro features", unlock everything
 
 ---
- app/build.gradle                              | 22 ------
+ app/build.gradle.kts                          | 26 -------
  .../keepass/activities/AboutActivity.kt       |  6 +-
  .../activities/FileDatabaseSelectActivity.kt  |  3 +-
  .../dialogs/ProFeatureDialogFragment.kt       | 67 -------------------
@@ -14,48 +14,52 @@ Subject: [PATCH 1/1] Remove "pro features", unlock everything
  .../keepass/settings/PreferencesUtil.kt       |  9 +--
  .../com/kunzisoft/keepass/utils/AppUtil.kt    |  6 --
  .../com/kunzisoft/keepass/utils/MenuUtil.kt   |  3 -
- 10 files changed, 18 insertions(+), 169 deletions(-)
+ 10 files changed, 18 insertions(+), 173 deletions(-)
  delete mode 100644 app/src/main/java/com/kunzisoft/keepass/activities/dialogs/ProFeatureDialogFragment.kt
 
-diff --git a/app/build.gradle b/app/build.gradle
-index 93fb9a175..ae7890901 100644
---- a/app/build.gradle
-+++ b/app/build.gradle
-@@ -53,34 +53,12 @@ android {
+diff --git a/app/build.gradle.kts b/app/build.gradle.kts
+index 23e3e698d..e15401ad8 100644
+--- a/app/build.gradle.kts
++++ b/app/build.gradle.kts
+@@ -55,38 +55,12 @@ android {
              applicationIdSuffix = ".libre"
-             buildConfigField "String", "BUILD_VERSION", "\"libre\""
-             buildConfigField "boolean", "CLOSED_STORE", "false"
--            buildConfigField "String[]", "STYLES_DISABLED",
--                            "{\"KeepassDXStyle_Red\"," +
--                            "\"KeepassDXStyle_Red_Night\"," +
--                            "\"KeepassDXStyle_Reply\"," +
--                            "\"KeepassDXStyle_Reply_Night\"," +
--                            "\"KeepassDXStyle_Purple\"," +
--                            "\"KeepassDXStyle_Purple_Dark\"," +
--                            "\"KeepassDXStyle_Dynamic_Light\"," +
--                            "\"KeepassDXStyle_Dynamic_Night\"}"
--            buildConfigField "String[]", "ICON_PACKS_DISABLED", "{}"
+             buildConfigField("String", "BUILD_VERSION", "\"libre\"")
+             buildConfigField("boolean", "CLOSED_STORE", "false")
+-            buildConfigField(
+-                "String[]", "STYLES_DISABLED",
+-                "{\"KeepassDXStyle_Red\"," +
+-                    "\"KeepassDXStyle_Red_Night\"," +
+-                    "\"KeepassDXStyle_Reply\"," +
+-                    "\"KeepassDXStyle_Reply_Night\"," +
+-                    "\"KeepassDXStyle_Purple\"," +
+-                    "\"KeepassDXStyle_Purple_Dark\"," +
+-                    "\"KeepassDXStyle_Dynamic_Light\"," +
+-                    "\"KeepassDXStyle_Dynamic_Night\"}"
+-            )
+-            buildConfigField("String[]", "ICON_PACKS_DISABLED", "{}")
          }
-         free {
-             dimension "version"
+         create("free") {
+             dimension = "version"
              applicationIdSuffix = ".free"
-             buildConfigField "String", "BUILD_VERSION", "\"free\""
-             buildConfigField "boolean", "CLOSED_STORE", "true"
--            buildConfigField "String[]", "STYLES_DISABLED",
--                            "{\"KeepassDXStyle_Blue\"," +
--                            "\"KeepassDXStyle_Blue_Night\"," +
--                            "\"KeepassDXStyle_Red\"," +
--                            "\"KeepassDXStyle_Red_Night\"," +
--                            "\"KeepassDXStyle_Reply\"," +
--                            "\"KeepassDXStyle_Reply_Night\"," +
--                            "\"KeepassDXStyle_Purple\"," +
--                            "\"KeepassDXStyle_Purple_Dark\"," +
--                            "\"KeepassDXStyle_Dynamic_Light\"," +
--                            "\"KeepassDXStyle_Dynamic_Night\"}"
--            buildConfigField "String[]", "ICON_PACKS_DISABLED", "{}"
-             manifestPlaceholders = [ googleAndroidBackupAPIKey:"AEdPqrEAAAAIbRfbV8fHLItXo8OcHwrO0sSNblqhPwkc0DPTqg" ]
+             buildConfigField("String", "BUILD_VERSION", "\"free\"")
+             buildConfigField("boolean", "CLOSED_STORE", "true")
+-            buildConfigField(
+-                "String[]", "STYLES_DISABLED",
+-                "{\"KeepassDXStyle_Blue\"," +
+-                    "\"KeepassDXStyle_Blue_Night\"," +
+-                    "\"KeepassDXStyle_Red\"," +
+-                    "\"KeepassDXStyle_Red_Night\"," +
+-                    "\"KeepassDXStyle_Reply\"," +
+-                    "\"KeepassDXStyle_Reply_Night\"," +
+-                    "\"KeepassDXStyle_Purple\"," +
+-                    "\"KeepassDXStyle_Purple_Dark\"," +
+-                    "\"KeepassDXStyle_Dynamic_Light\"," +
+-                    "\"KeepassDXStyle_Dynamic_Night\"}"
+-            )
+-            buildConfigField("String[]", "ICON_PACKS_DISABLED", "{}")
+             manifestPlaceholders["googleAndroidBackupAPIKey"] = "AEdPqrEAAAAIbRfbV8fHLItXo8OcHwrO0sSNblqhPwkc0DPTqg"
+             manifestPlaceholders["googlePlayServicesPackage"] = gmsPackage
          }
-     }
 diff --git a/app/src/main/java/com/kunzisoft/keepass/activities/AboutActivity.kt b/app/src/main/java/com/kunzisoft/keepass/activities/AboutActivity.kt
 index c07cc8c4a..f289c55bf 100644
 --- a/app/src/main/java/com/kunzisoft/keepass/activities/AboutActivity.kt
@@ -81,10 +85,10 @@ index c07cc8c4a..f289c55bf 100644
  
          var version: String
 diff --git a/app/src/main/java/com/kunzisoft/keepass/activities/FileDatabaseSelectActivity.kt b/app/src/main/java/com/kunzisoft/keepass/activities/FileDatabaseSelectActivity.kt
-index a30aa0abb..f47b5e650 100644
+index 08834bae3..689ce0989 100644
 --- a/app/src/main/java/com/kunzisoft/keepass/activities/FileDatabaseSelectActivity.kt
 +++ b/app/src/main/java/com/kunzisoft/keepass/activities/FileDatabaseSelectActivity.kt
-@@ -59,7 +59,6 @@ import com.kunzisoft.keepass.services.DatabaseTaskNotificationService.Companion.
+@@ -62,7 +62,6 @@ import com.kunzisoft.keepass.services.DatabaseTaskNotificationService.Companion.
  import com.kunzisoft.keepass.services.DatabaseTaskNotificationService.Companion.ACTION_DATABASE_LOAD_TASK
  import com.kunzisoft.keepass.settings.PreferencesUtil
  import com.kunzisoft.keepass.tasks.ActionRunnable
@@ -92,7 +96,7 @@ index a30aa0abb..f47b5e650 100644
  import com.kunzisoft.keepass.utils.DexUtil
  import com.kunzisoft.keepass.utils.MagikeyboardUtil
  import com.kunzisoft.keepass.utils.MenuUtil
-@@ -342,7 +341,7 @@ class FileDatabaseSelectActivity : DatabaseModeActivity(),
+@@ -362,7 +361,7 @@ class FileDatabaseSelectActivity : DatabaseModeActivity() {
          super.onResume()
  
          // Define special title
@@ -175,7 +179,7 @@ index d500ae671..000000000
 -    }
 -}
 diff --git a/app/src/main/java/com/kunzisoft/keepass/activities/dialogs/SetOTPDialogFragment.kt b/app/src/main/java/com/kunzisoft/keepass/activities/dialogs/SetOTPDialogFragment.kt
-index 7cd67462d..0192a5a98 100644
+index 512a2450c..03627c745 100644
 --- a/app/src/main/java/com/kunzisoft/keepass/activities/dialogs/SetOTPDialogFragment.kt
 +++ b/app/src/main/java/com/kunzisoft/keepass/activities/dialogs/SetOTPDialogFragment.kt
 @@ -49,7 +49,6 @@ import com.kunzisoft.keepass.otp.OtpElement.Companion.MIN_TOTP_PERIOD
@@ -185,8 +189,8 @@ index 7cd67462d..0192a5a98 100644
 -import com.kunzisoft.keepass.utils.AppUtil.isContributingUser
  import com.kunzisoft.keepass.utils.UriUtil.openUrl
  import com.kunzisoft.keepass.utils.getParcelableCompat
- import java.util.Locale
-@@ -217,7 +216,7 @@ class SetOTPDialogFragment : DatabaseDialogFragment() {
+ import com.kunzisoft.keepass.viewmodels.EntryEditViewModel
+@@ -204,7 +203,7 @@ class SetOTPDialogFragment : DatabaseDialogFragment() {
              }
              // Proprietary only on full version
              mTotpTokenTypeArray = OtpTokenType.getTotpTokenTypeValues(
@@ -229,7 +233,7 @@ index 00e39cf2d..576522f04 100644
              // Create the AlertDialog object and return it
              return builder.create()
 diff --git a/app/src/main/java/com/kunzisoft/keepass/settings/NestedAppSettingsFragment.kt b/app/src/main/java/com/kunzisoft/keepass/settings/NestedAppSettingsFragment.kt
-index fee2225b9..f45a1cb1f 100644
+index a4aac4fc2..b9634aa5a 100644
 --- a/app/src/main/java/com/kunzisoft/keepass/settings/NestedAppSettingsFragment.kt
 +++ b/app/src/main/java/com/kunzisoft/keepass/settings/NestedAppSettingsFragment.kt
 @@ -31,7 +31,6 @@ import androidx.preference.Preference
@@ -307,7 +311,7 @@ index fee2225b9..f45a1cb1f 100644
              }
  
              findPreference<Preference>(getString(R.string.reset_education_screens_key))?.setOnPreferenceClickListener {
-@@ -523,4 +493,4 @@ class NestedAppSettingsFragment : NestedSettingsFragment() {
+@@ -532,4 +502,4 @@ class NestedAppSettingsFragment : NestedSettingsFragment() {
  
          var DATABASE_PREFERENCE_CHANGED = false
      }
@@ -315,7 +319,7 @@ index fee2225b9..f45a1cb1f 100644
 \ No newline at end of file
 +}
 diff --git a/app/src/main/java/com/kunzisoft/keepass/settings/PreferencesUtil.kt b/app/src/main/java/com/kunzisoft/keepass/settings/PreferencesUtil.kt
-index 835ae2369..b7ad14411 100644
+index e5e705ac5..7f1caf3a4 100644
 --- a/app/src/main/java/com/kunzisoft/keepass/settings/PreferencesUtil.kt
 +++ b/app/src/main/java/com/kunzisoft/keepass/settings/PreferencesUtil.kt
 @@ -37,7 +37,6 @@ import com.kunzisoft.keepass.education.Education
@@ -326,7 +330,7 @@ index 835ae2369..b7ad14411 100644
  import com.kunzisoft.keepass.utils.KeyboardUtil.isKeyboardActivatedInSettings
  import java.util.Properties
  
-@@ -186,14 +185,8 @@ object PreferencesUtil {
+@@ -201,14 +200,8 @@ object PreferencesUtil {
      }
  
      fun setStyle(context: Context, styleString: String) {
@@ -343,10 +347,10 @@ index 835ae2369..b7ad14411 100644
              putString(context.getString(R.string.setting_style_key), tempThemeString)
          }
 diff --git a/app/src/main/java/com/kunzisoft/keepass/utils/AppUtil.kt b/app/src/main/java/com/kunzisoft/keepass/utils/AppUtil.kt
-index bacfe88db..7b392b57d 100644
+index 6b70efe2d..79e1e52eb 100644
 --- a/app/src/main/java/com/kunzisoft/keepass/utils/AppUtil.kt
 +++ b/app/src/main/java/com/kunzisoft/keepass/utils/AppUtil.kt
-@@ -78,12 +78,6 @@ object AppUtil {
+@@ -82,12 +82,6 @@ object AppUtil {
          }
      }
  
@@ -381,5 +385,5 @@ index 6df1c4561..59d1b5712 100644
  
      fun onDefaultMenuOptionsItemSelected(activity: Activity,
 -- 
-2.54.0
+2.55.0
 
