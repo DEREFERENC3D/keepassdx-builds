@@ -1,24 +1,24 @@
-From 22da4ddcc9960ace0d252d55629a8cfc177fb390 Mon Sep 17 00:00:00 2001
+From d26d787f9d5d4c7d672e0d0f63c48dc76eaefe1e Mon Sep 17 00:00:00 2001
 From: DEREFERENC3D <DEREFERENC3D@protonmail.com>
-Date: Sun, 14 Jun 2026 01:41:11 +0200
+Date: Sun, 1 Nov 2026 14:22:45 +0100
 Subject: [PATCH 1/1] Remove "pro features", unlock everything
 
 ---
- app/build.gradle.kts                          | 26 -------
- .../keepass/activities/AboutActivity.kt       |  6 +-
+ app/build.gradle.kts                          | 26 --------
+ .../keepass/activities/AboutActivity.kt       |  9 +--
  .../activities/FileDatabaseSelectActivity.kt  |  3 +-
- .../dialogs/ProFeatureDialogFragment.kt       | 67 -------------------
+ .../keepass/activities/GroupActivity.kt       |  3 +-
+ .../dialogs/ProFeatureDialogFragment.kt       | 61 -------------------
  .../dialogs/SetOTPDialogFragment.kt           |  3 +-
- .../UnderDevelopmentFeatureDialogFragment.kt  | 22 ++----
- .../settings/NestedAppSettingsFragment.kt     | 46 +++----------
- .../keepass/settings/PreferencesUtil.kt       |  9 +--
- .../com/kunzisoft/keepass/utils/AppUtil.kt    |  6 --
- .../com/kunzisoft/keepass/utils/MenuUtil.kt   |  3 -
- 10 files changed, 18 insertions(+), 173 deletions(-)
+ .../UnderDevelopmentFeatureDialogFragment.kt  | 22 ++-----
+ .../settings/NestedAppSettingsFragment.kt     | 44 +++----------
+ .../keepass/settings/PreferencesUtil.kt       | 11 +---
+ .../com/kunzisoft/keepass/utils/AppUtil.kt    |  8 ---
+ 10 files changed, 20 insertions(+), 170 deletions(-)
  delete mode 100644 app/src/main/java/com/kunzisoft/keepass/activities/dialogs/ProFeatureDialogFragment.kt
 
 diff --git a/app/build.gradle.kts b/app/build.gradle.kts
-index 23e3e698d..e15401ad8 100644
+index e4ab0316d..980668abe 100644
 --- a/app/build.gradle.kts
 +++ b/app/build.gradle.kts
 @@ -55,38 +55,12 @@ android {
@@ -61,18 +61,19 @@ index 23e3e698d..e15401ad8 100644
              manifestPlaceholders["googlePlayServicesPackage"] = gmsPackage
          }
 diff --git a/app/src/main/java/com/kunzisoft/keepass/activities/AboutActivity.kt b/app/src/main/java/com/kunzisoft/keepass/activities/AboutActivity.kt
-index c07cc8c4a..f289c55bf 100644
+index 3878e662a..1dc7ab601 100644
 --- a/app/src/main/java/com/kunzisoft/keepass/activities/AboutActivity.kt
 +++ b/app/src/main/java/com/kunzisoft/keepass/activities/AboutActivity.kt
-@@ -31,7 +31,6 @@ import androidx.core.text.HtmlCompat
+@@ -33,8 +33,6 @@ import androidx.core.view.isVisible
  import com.kunzisoft.keepass.BuildConfig
  import com.kunzisoft.keepass.R
  import com.kunzisoft.keepass.activities.stylish.StylishActivity
 -import com.kunzisoft.keepass.utils.AppUtil.isContributingUser
+-import com.kunzisoft.keepass.utils.AppUtil.isKeeProAppInstalled
+ import com.kunzisoft.keepass.utils.AppUtil.openContributionLink
  import com.kunzisoft.keepass.utils.getPackageInfoCompat
  import org.joda.time.DateTime
- 
-@@ -48,10 +47,7 @@ class AboutActivity : StylishActivity() {
+@@ -52,10 +50,7 @@ class AboutActivity : StylishActivity() {
          supportActionBar?.setDisplayHomeAsUpEnabled(true)
          supportActionBar?.setDisplayShowHomeEnabled(true)
  
@@ -84,11 +85,20 @@ index c07cc8c4a..f289c55bf 100644
          findViewById<TextView>(R.id.activity_about_app_name).text = appName
  
          var version: String
+@@ -115,7 +110,7 @@ class AboutActivity : StylishActivity() {
+             } else {
+                 R.string.contribute
+             })
+-            isVisible = !BuildConfig.CLOSED_STORE || !isKeeProAppInstalled()
++            isVisible = !BuildConfig.CLOSED_STORE
+             setOnClickListener {
+                 openContributionLink()
+             }
 diff --git a/app/src/main/java/com/kunzisoft/keepass/activities/FileDatabaseSelectActivity.kt b/app/src/main/java/com/kunzisoft/keepass/activities/FileDatabaseSelectActivity.kt
-index 08834bae3..689ce0989 100644
+index 0276ff2ea..555b5e9e4 100644
 --- a/app/src/main/java/com/kunzisoft/keepass/activities/FileDatabaseSelectActivity.kt
 +++ b/app/src/main/java/com/kunzisoft/keepass/activities/FileDatabaseSelectActivity.kt
-@@ -62,7 +62,6 @@ import com.kunzisoft.keepass.services.DatabaseTaskNotificationService.Companion.
+@@ -66,7 +66,6 @@ import com.kunzisoft.keepass.services.DatabaseTaskNotificationService.Companion.
  import com.kunzisoft.keepass.services.DatabaseTaskNotificationService.Companion.ACTION_DATABASE_LOAD_TASK
  import com.kunzisoft.keepass.settings.PreferencesUtil
  import com.kunzisoft.keepass.tasks.ActionRunnable
@@ -105,12 +115,33 @@ index 08834bae3..689ce0989 100644
  
          // Show open and create button or special mode
          when (mSpecialMode) {
+diff --git a/app/src/main/java/com/kunzisoft/keepass/activities/GroupActivity.kt b/app/src/main/java/com/kunzisoft/keepass/activities/GroupActivity.kt
+index c62d92d57..b7867d07c 100644
+--- a/app/src/main/java/com/kunzisoft/keepass/activities/GroupActivity.kt
++++ b/app/src/main/java/com/kunzisoft/keepass/activities/GroupActivity.kt
+@@ -103,7 +103,6 @@ import com.kunzisoft.keepass.settings.PreferencesUtil
+ import com.kunzisoft.keepass.settings.SettingsActivity
+ import com.kunzisoft.keepass.tasks.ActionRunnable
+ import com.kunzisoft.keepass.timeout.TimeoutHelper
+-import com.kunzisoft.keepass.utils.AppUtil.isContributingUser
+ import com.kunzisoft.keepass.utils.AppUtil.openContributionLink
+ import com.kunzisoft.keepass.utils.KeyboardUtil.hideKeyboard
+ import com.kunzisoft.keepass.utils.TimeUtil.datePickerToDataDate
+@@ -1060,7 +1059,7 @@ class GroupActivity : DatabaseLockActivity() {
+             menu.findItem(R.id.menu_about)?.isVisible = modeCondition
+             menu.findItem(R.id.menu_contribute)?.apply {
+                 title = getString(if (BuildConfig.CLOSED_STORE) R.string.get_keepro else R.string.contribute)
+-                isVisible = !context.isContributingUser() && modeCondition
++                isVisible = false
+             }
+         }
+     }
 diff --git a/app/src/main/java/com/kunzisoft/keepass/activities/dialogs/ProFeatureDialogFragment.kt b/app/src/main/java/com/kunzisoft/keepass/activities/dialogs/ProFeatureDialogFragment.kt
 deleted file mode 100644
-index d500ae671..000000000
+index 914b6dd1b..000000000
 --- a/app/src/main/java/com/kunzisoft/keepass/activities/dialogs/ProFeatureDialogFragment.kt
 +++ /dev/null
-@@ -1,67 +0,0 @@
+@@ -1,61 +0,0 @@
 -/*
 - * Copyright 2019 Jeremy Jamet / Kunzisoft.
 - *
@@ -141,7 +172,7 @@ index d500ae671..000000000
 -import androidx.fragment.app.DialogFragment
 -import com.kunzisoft.keepass.BuildConfig
 -import com.kunzisoft.keepass.R
--import com.kunzisoft.keepass.utils.UriUtil.openUrl
+-import com.kunzisoft.keepass.utils.AppUtil.openContributionLink
 -
 -/**
 - * Custom Dialog that asks the user to download the pro version or make a donation.
@@ -157,18 +188,12 @@ index d500ae671..000000000
 -            if (BuildConfig.CLOSED_STORE) {
 -                stringBuilder.append(HtmlCompat.fromHtml(getString(R.string.html_text_ad_free), FROM_HTML_MODE_LEGACY)).append("\n\n")
 -                stringBuilder.append(HtmlCompat.fromHtml(getString(R.string.html_text_buy_pro), FROM_HTML_MODE_LEGACY))
--                builder.setPositiveButton(R.string.download) { _, _ ->
--                    activity.openUrl(
--                        activity.getString(R.string.play_store_url,
--                            activity.getString(R.string.keepro_app_id))
--                    )
--                }
 -            } else {
 -                stringBuilder.append(HtmlCompat.fromHtml(getString(R.string.html_text_feature_generosity), FROM_HTML_MODE_LEGACY)).append("\n\n")
 -                stringBuilder.append(HtmlCompat.fromHtml(getString(R.string.html_text_donation), FROM_HTML_MODE_LEGACY))
--                builder.setPositiveButton(R.string.contribute) { _, _ ->
--                    activity.openUrl(R.string.contribution_url)
--                }
+-            }
+-            builder.setPositiveButton(R.string.get_keepro) { _, _ ->
+-                activity.openContributionLink()
 -            }
 -            builder.setMessage(stringBuilder)
 -            builder.setNegativeButton(android.R.string.cancel) { _, _ -> dismiss() }
@@ -200,7 +225,7 @@ index 512a2450c..03627c745 100644
              totpTokenTypeAdapter = ArrayAdapter(activity,
                      android.R.layout.simple_spinner_item, mTotpTokenTypeArray!!).apply {
 diff --git a/app/src/main/java/com/kunzisoft/keepass/activities/dialogs/UnderDevelopmentFeatureDialogFragment.kt b/app/src/main/java/com/kunzisoft/keepass/activities/dialogs/UnderDevelopmentFeatureDialogFragment.kt
-index 00e39cf2d..576522f04 100644
+index 93d1c2ce2..bf73132aa 100644
 --- a/app/src/main/java/com/kunzisoft/keepass/activities/dialogs/UnderDevelopmentFeatureDialogFragment.kt
 +++ b/app/src/main/java/com/kunzisoft/keepass/activities/dialogs/UnderDevelopmentFeatureDialogFragment.kt
 @@ -39,22 +39,12 @@ class UnderDevelopmentFeatureDialogFragment : DialogFragment() {
@@ -219,21 +244,21 @@ index 00e39cf2d..576522f04 100644
 -                stringBuilder.append(HtmlCompat.fromHtml(getString(R.string.html_text_dev_feature), HtmlCompat.FROM_HTML_MODE_LEGACY)).append("\n\n")
 -                        .append(HtmlCompat.fromHtml(getString(R.string.html_text_dev_feature_contibute), HtmlCompat.FROM_HTML_MODE_LEGACY)).append(" ")
 -                        .append(HtmlCompat.fromHtml(getString(R.string.html_text_dev_feature_encourage), HtmlCompat.FROM_HTML_MODE_LEGACY))
--                builder.setPositiveButton(R.string.contribute) { _, _ ->
--                    context?.openUrl(R.string.contribution_url)
+-                builder.setPositiveButton(R.string.get_keepro) { _, _ ->
+-                    context?.openContributionLink()
 -                }
 -            //}
 +            stringBuilder.append(HtmlCompat.fromHtml(getString(R.string.html_text_dev_feature), HtmlCompat.FROM_HTML_MODE_LEGACY)).append("\n\n")
 +                    .append(HtmlCompat.fromHtml(getString(R.string.html_text_dev_feature_contibute), HtmlCompat.FROM_HTML_MODE_LEGACY)).append(" ")
 +                    .append(HtmlCompat.fromHtml(getString(R.string.html_text_dev_feature_encourage), HtmlCompat.FROM_HTML_MODE_LEGACY))
-+            builder.setPositiveButton(R.string.contribute) { _, _ ->
-+                context?.openUrl(R.string.contribution_url)
++            builder.setPositiveButton(R.string.get_keepro) { _, _ ->
++                context?.openContributionLink()
 +            }
              builder.setMessage(stringBuilder)
              // Create the AlertDialog object and return it
              return builder.create()
 diff --git a/app/src/main/java/com/kunzisoft/keepass/settings/NestedAppSettingsFragment.kt b/app/src/main/java/com/kunzisoft/keepass/settings/NestedAppSettingsFragment.kt
-index a4aac4fc2..b9634aa5a 100644
+index a4aac4fc2..f278d0377 100644
 --- a/app/src/main/java/com/kunzisoft/keepass/settings/NestedAppSettingsFragment.kt
 +++ b/app/src/main/java/com/kunzisoft/keepass/settings/NestedAppSettingsFragment.kt
 @@ -31,7 +31,6 @@ import androidx.preference.Preference
@@ -311,15 +336,8 @@ index a4aac4fc2..b9634aa5a 100644
              }
  
              findPreference<Preference>(getString(R.string.reset_education_screens_key))?.setOnPreferenceClickListener {
-@@ -532,4 +502,4 @@ class NestedAppSettingsFragment : NestedSettingsFragment() {
- 
-         var DATABASE_PREFERENCE_CHANGED = false
-     }
--}
-\ No newline at end of file
-+}
 diff --git a/app/src/main/java/com/kunzisoft/keepass/settings/PreferencesUtil.kt b/app/src/main/java/com/kunzisoft/keepass/settings/PreferencesUtil.kt
-index e5e705ac5..7f1caf3a4 100644
+index e5e705ac5..7fbb3d0c7 100644
 --- a/app/src/main/java/com/kunzisoft/keepass/settings/PreferencesUtil.kt
 +++ b/app/src/main/java/com/kunzisoft/keepass/settings/PreferencesUtil.kt
 @@ -37,7 +37,6 @@ import com.kunzisoft.keepass.education.Education
@@ -330,7 +348,7 @@ index e5e705ac5..7f1caf3a4 100644
  import com.kunzisoft.keepass.utils.KeyboardUtil.isKeyboardActivatedInSettings
  import java.util.Properties
  
-@@ -201,14 +200,8 @@ object PreferencesUtil {
+@@ -201,16 +200,10 @@ object PreferencesUtil {
      }
  
      fun setStyle(context: Context, styleString: String) {
@@ -344,46 +362,30 @@ index e5e705ac5..7f1caf3a4 100644
 -        tempThemeString = Stylish.retrieveEquivalentLightStyle(context, tempThemeString)
 +        var tempThemeString = Stylish.retrieveEquivalentLightStyle(context, styleString)
          PreferenceManager.getDefaultSharedPreferences(context).edit {
-             putString(context.getString(R.string.setting_style_key), tempThemeString)
+-            putString(context.getString(R.string.setting_style_key), tempThemeString)
++            putString(context.getString(R.string.setting_style_key), styleString)
          }
+         Stylish.load(context)
+     }
 diff --git a/app/src/main/java/com/kunzisoft/keepass/utils/AppUtil.kt b/app/src/main/java/com/kunzisoft/keepass/utils/AppUtil.kt
-index 6b70efe2d..79e1e52eb 100644
+index 8bc59d587..0ad8d3aa1 100644
 --- a/app/src/main/java/com/kunzisoft/keepass/utils/AppUtil.kt
 +++ b/app/src/main/java/com/kunzisoft/keepass/utils/AppUtil.kt
-@@ -82,12 +82,6 @@ object AppUtil {
+@@ -94,14 +94,6 @@ object AppUtil {
          }
      }
  
+-    fun Context.isKeeProAppInstalled(): Boolean = isExternalAppInstalled(
+-        this.getString(R.string.keepro_app_id), false)
+-
 -    fun Context.isContributingUser(): Boolean {
 -        return (Education.isEducationScreenReclickedPerformed(this)
--                || isExternalAppInstalled(this.getString(R.string.keepro_app_id), false)
--                )
+-                || isKeeProAppInstalled())
 -    }
 -
      @RequiresApi(Build.VERSION_CODES.P)
      fun getInstalledBrowsersWithSignatures(
          context: Context,
-diff --git a/app/src/main/java/com/kunzisoft/keepass/utils/MenuUtil.kt b/app/src/main/java/com/kunzisoft/keepass/utils/MenuUtil.kt
-index 6df1c4561..59d1b5712 100644
---- a/app/src/main/java/com/kunzisoft/keepass/utils/MenuUtil.kt
-+++ b/app/src/main/java/com/kunzisoft/keepass/utils/MenuUtil.kt
-@@ -28,7 +28,6 @@ import android.view.MenuItem
- import com.kunzisoft.keepass.R
- import com.kunzisoft.keepass.activities.AboutActivity
- import com.kunzisoft.keepass.settings.SettingsActivity
--import com.kunzisoft.keepass.utils.AppUtil.isContributingUser
- import com.kunzisoft.keepass.utils.UriUtil.openUrl
- 
- object MenuUtil {
-@@ -36,8 +35,6 @@ object MenuUtil {
-     fun defaultMenuInflater(context: Context, inflater: MenuInflater, menu: Menu) {
-         inflater.inflate(R.menu.settings, menu)
-         inflater.inflate(R.menu.about, menu)
--        if (!context.isContributingUser())
--            menu.findItem(R.id.menu_contribute)?.isVisible = false
-     }
- 
-     fun onDefaultMenuOptionsItemSelected(activity: Activity,
 -- 
-2.55.0
+2.56.0
 
